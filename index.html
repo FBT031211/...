@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Catatan Rahasia</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d1f0d; /* hijau gelap */
+      color: #e0f2e0;      /* teks hijau pucat */
+      padding: 20px;
+    }
+    h2 {
+      color: #4CAF50; /* hijau terang */
+      text-shadow: 0 0 8px #4CAF50;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+      background: #1b3b1b;
+      color: #e0f2e0;
+      border: 2px solid #4CAF50;
+      border-radius: 8px;
+      outline: none;
+      box-shadow: 0 0 5px #4CAF50;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    #output {
+      background: #1b3b1b;
+      color: #a8e6a1;
+      padding: 10px;
+      min-height: 50px;
+      border-radius: 6px;
+      border: 2px solid #4CAF50;
+      margin-top: 10px;
+      box-shadow: 0 0 10px #2e7d32;
+    }
+    .encrypt { background: #4CAF50; color: white; }
+    .decrypt { background: #2e7d32; color: white; }
+    .copy { background: #66bb6a; color: white; }
+    .change { background: #388e3c; color: white; }
+
+    /* Efek glow saat hover */
+    button:hover {
+      box-shadow: 0 0 12px #4CAF50, 0 0 20px #66bb6a;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h2>🔐 Catatan Rahasia</h2>
+  <textarea id="inputText" placeholder="Tulis catatanmu di sini..."></textarea><br>
+  
+  <button class="encrypt" onclick="encryptText()">Encrypt</button>
+  <button class="decrypt" onclick="decryptText()">Decrypt</button>
+  <button class="copy" onclick="copyText()">Copy</button>
+  <button class="change" onclick="changePassword()">Ubah Password</button>
+  
+  <h3>Hasil:</h3>
+  <div id="output"></div>
+
+  <script>
+    const kode = {
+      "A":"#", "B":"%", "C":"@", "D":"&", "E":"*", "F":"$", "G":"!", "H":"^", "I":"~",
+      "J":"1", "K":"2", "L":"3", "M":"4", "N":"5", "O":"6", "P":"7", "Q":"8", "R":"9",
+      "S":"0", "T":"?", "U":"+", "V":"<", "W":">", "X":"=", "Y":"{", "Z":"}"
+    };
+
+    const reverseKode = Object.fromEntries(Object.entries(kode).map(([k,v]) => [v,k]));
+
+    // Password default
+    let password = "rahasia123";
+
+    function encryptText() {
+      let text = document.getElementById("inputText").value.toUpperCase();
+      let encrypted = text.split("").map(ch => kode[ch] || ch).join("");
+      document.getElementById("output").innerText = encrypted;
+    }
+
+    function decryptText() {
+      let inputPass = prompt("Masukkan password untuk decrypt:");
+      if (inputPass !== password) {
+        alert("❌ Password salah! Tidak bisa decrypt.");
+        return;
+      }
+      let text = document.getElementById("inputText").value;
+      let decrypted = text.split("").map(ch => reverseKode[ch] || ch).join("");
+      document.getElementById("output").innerText = decrypted;
+    }
+
+    function copyText() {
+      let output = document.getElementById("output").innerText;
+      if (!output) {
+        alert("⚠️ Tidak ada teks untuk dicopy!");
+        return;
+      }
+      navigator.clipboard.writeText(output).then(() => {
+        alert("✅ Teks berhasil dicopy!");
+      });
+    }
+
+    function changePassword() {
+      let oldPass = prompt("Masukkan password lama:");
+      if (oldPass !== password) {
+        alert("❌ Password lama salah!");
+        return;
+      }
+      let newPass = prompt("Masukkan password baru:");
+      if (!newPass) {
+        alert("⚠️ Password baru tidak boleh kosong!");
+        return;
+      }
+      password = newPass;
+      alert("✅ Password berhasil diubah!");
+    }
+  </script>
+</body>
+</html>
