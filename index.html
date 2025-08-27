@@ -70,70 +70,73 @@
   
   <h3>Hasil:</h3>
   <div id="output"></div>
+<script>
+  const kode = {
+    "32": "Ω","33": "¡","34": "¢","35": "£","36": "¤","37": "¥","38": "¦","39": "§",
+    "40": "¨","41": "©","42": "ª","43": "«","44": "¬","45": "®","46": "¯","47": "°",
+    "48": "±","49": "²","50": "³","51": "´","52": "µ","53": "¶","54": "·","55": "¸",
+    "56": "¹","57": "º","58": "»","59": "¼","60": "½","61": "¾","62": "¿","63": "À",
+    "64": "Á","65": "Â","66": "Ã","67": "Ä","68": "Å","69": "Æ","70": "Ç","71": "È",
+    "72": "É","73": "Ê","74": "Ë","75": "Ì","76": "Í","77": "Î","78": "Ï","79": "Ð",
+    "80": "Ñ","81": "Ò","82": "Ó","83": "Ô","84": "Õ","85": "Ö","86": "×","87": "Ø",
+    "88": "Ù","89": "Ú","90": "Û","91": "Ü","92": "Ý","93": "Þ","94": "ß","95": "à",
+    "96": "á","97": "â","98": "ã","99": "ä","100": "å","101": "æ","102": "ç","103": "è",
+    "104": "é","105": "ê","106": "ë","107": "ì","108": "í","109": "î","110": "ï","111": "ð",
+    "112": "ñ","113": "ò","114": "ó","115": "ô","116": "õ","117": "ö","118": "÷","119": "ø",
+    "120": "ù","121": "ú","122": "û","123": "ü","124": "ý","125": "þ","126": "ÿ","127": "Δ"
+  };
 
-  <script>
-    const kode = {
-  " ": "M", "!": "v", "\"": "R", "#": ")", "$": "h", "%": "4", "&": "X", "'": "s", 
-  "(": "e", ")": "F", "*": "u", "+": "p", ",": "Z", "-": "5", ".": "c", "/": "Q",
-  "0": "J", "1": "O", "2": "}", "3": "2", "4": "E", "5": "n", "6": "D", "7": "y", 
-  "8": "f", "9": "A", ":": "S", ";": "g", "<": "x", "=": "G", ">": "U", "?": "z", 
-  "@": "q", "A": "9", "B": "8", "C": "7", "D": "a", "E": "b", "F": "6", "G": "m", 
-  "H": "N", "I": "j", "J": "3", "K": "o", "L": "0", "M": "1", "N": "l", "O": "H", 
-  "P": "w", "Q": "C", "R": "B", "S": "t", "T": "Y", "U": "d", "V": "r", "W": "k", 
-  "X": "i", "Y": "T", "Z": "L", "[": "W", "\\": "K", "]": "P", "^": "V", "_": "I", 
-  "`": "=", "a": "o", "b": "!", "c": "(", "d": "}", "e": "J", "f": ">", "g": "Q", 
-  "h": "U", "i": "G", "j": "z", "k": "h", "l": "F", "m": "%", "n": "u", "o": "g", 
-  "p": "C", "q": "f", "r": "X", "s": "S", "t": "Y", "u": "7", "v": "r", "w": "N", 
-  "x": "O", "y": "M", "z": "V", "{": "c", "|": "&", "}": "+", "~": ";"
-};
+  // mapping balik (decrypt)
+  const reverseKode = Object.fromEntries(Object.entries(kode).map(([k,v]) => [v,k]));
 
-    const reverseKode = Object.fromEntries(Object.entries(kode).map(([k,v]) => [v,k]));
+  // password default
+  let password = "kgyFBT9520";
 
-    // Password default
-    let password = "kgyFBT9520";
+  function encryptText() {
+    let text = document.getElementById("inputText").value;
+    let encrypted = text.split("").map(ch => kode[ch.charCodeAt(0)] || ch).join("");
+    document.getElementById("output").innerText = encrypted;
+  }
 
-    function encryptText() {
-      let text = document.getElementById("inputText").value.toUpperCase();
-      let encrypted = text.split("").map(ch => kode[ch] || ch).join("");
-      document.getElementById("output").innerText = encrypted;
+  function decryptText() {
+    let inputPass = prompt("Masukkan password untuk decrypt:");
+    if (inputPass !== password) {
+      alert("❌ Password salah! Tidak bisa decrypt.");
+      return;
     }
+    let text = document.getElementById("inputText").value;
+    let decrypted = text.split("").map(ch => {
+      let kodeAscii = reverseKode[ch];
+      return kodeAscii ? String.fromCharCode(kodeAscii) : ch;
+    }).join("");
+    document.getElementById("output").innerText = decrypted;
+  }
 
-    function decryptText() {
-      let inputPass = prompt("Masukkan password untuk decrypt:");
-      if (inputPass !== password) {
-        alert("❌ Password salah! Tidak bisa decrypt.");
-        return;
-      }
-      let text = document.getElementById("inputText").value;
-      let decrypted = text.split("").map(ch => reverseKode[ch] || ch).join("");
-      document.getElementById("output").innerText = decrypted;
+  function copyText() {
+    let output = document.getElementById("output").innerText;
+    if (!output) {
+      alert("⚠️ Tidak ada teks untuk dicopy!");
+      return;
     }
+    navigator.clipboard.writeText(output).then(() => {
+      alert("✅ Teks berhasil dicopy!");
+    });
+  }
 
-    function copyText() {
-      let output = document.getElementById("output").innerText;
-      if (!output) {
-        alert("⚠️ Tidak ada teks untuk dicopy!");
-        return;
-      }
-      navigator.clipboard.writeText(output).then(() => {
-        alert("✅ Teks berhasil dicopy!");
-      });
+  function changePassword() {
+    let oldPass = prompt("Masukkan password lama:");
+    if (oldPass !== password) {
+      alert("❌ Password lama salah!");
+      return;
     }
-
-    function changePassword() {
-      let oldPass = prompt("Masukkan password lama:");
-      if (oldPass !== password) {
-        alert("❌ Password lama salah!");
-        return;
-      }
-      let newPass = prompt("Masukkan password baru:");
-      if (!newPass) {
-        alert("⚠️ Password baru tidak boleh kosong!");
-        return;
-      }
-      password = newPass;
-      alert("✅ Password berhasil diubah!");
+    let newPass = prompt("Masukkan password baru:");
+    if (!newPass) {
+      alert("⚠️ Password baru tidak boleh kosong!");
+      return;
     }
-  </script>
+    password = newPass;
+    alert("✅ Password berhasil diubah!");
+  }
+</script>
 </body>
 </html>
